@@ -32,7 +32,7 @@ class LimpezaDeDados:
         print(f"Registros finais: {len(self.df)}")
 
 if __name__ == "__main__":
-    from importacao_dados import CAMINHO_CSV, CAMINHO_CSV_ORIGINAL
+    from Importacao_dados import CAMINHO_CSV, CAMINHO_CSV_ORIGINAL
 
     limpeza = LimpezaDeDados(pd.read_csv(CAMINHO_CSV, sep=";"))
     limpeza.executar()
