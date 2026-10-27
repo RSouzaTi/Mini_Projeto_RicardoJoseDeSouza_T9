@@ -1,148 +1,171 @@
 # Análise exploratória de dados de varejo
 
 **Aluno:** Ricardo José de Souza  
-**Turma:** T9  
-**Tecnologias utilizadas:** Python, pandas e Rich
+**Turma:** T9
 
-## Sobre o projeto
+O projeto prepara dados de compras de varejo e produz um relatório de qualidade,
+estatísticas descritivas e agrupamentos com Python, pandas e Rich.
 
-Este mini projeto aplica conceitos de análise exploratória a uma base de varejo. O trabalho foi organizado em módulos para leitura dos arquivos, limpeza dos dados, cálculo de indicadores e apresentação dos resultados no terminal.
+Fonte: [Base Varejo no Kaggle](https://www.kaggle.com/datasets/namespaiva/base-varejo/data).
 
-O objetivo é compreender a estrutura da base, observar o efeito do tratamento de valores ausentes e duplicatas e identificar padrões entre clientes, categorias e produtos.
+## Instalação e execução
 
-**Fonte dos dados:** [Base Varejo no Kaggle](https://www.kaggle.com/datasets/namespaiva/base-varejo/data).
-
-## Estrutura do repositório
-
-| Arquivo | Finalidade |
-| --- | --- |
-| `Base_Varejo.csv` | Base de entrada disponível no repositório. |
-| `Base_varejo_original.csv` | Arquivo de saída da limpeza. Apesar do nome, recebe os dados tratados e é sobrescrito a cada execução dessa etapa. |
-| `importacao_dados.py` | Define os caminhos e lê a base de entrada com pandas. |
-| `Limpeza_dados.py` | Remove colunas totalmente vazias, linhas com valores ausentes e linhas duplicadas; exibe as contagens antes e depois da limpeza e salva o resultado. |
-| `Resumo.py` | Calcula os indicadores e exibe um painel no terminal. |
-| `formatacao.py` | Disponibiliza o console Rich e uma função de formatação numérica no padrão brasileiro. |
-| `requirements.txt` | Declara a dependência do pandas. O Rich precisa ser instalado separadamente no estado atual do projeto. |
-| `README_RicardoJoseDeSouza_T9.md` | Contém instruções complementares de execução. |
-
-## Preparação do ambiente
-
-Na pasta do projeto, abra o terminal do PowerShell e execute:
+No PowerShell, dentro da pasta do projeto:
 
 ```powershell
 python -m venv venv
 .\venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
-python -m pip install rich
+python importacao_dados.py
+python Limpeza_dados.py
+python Resumo.py
 ```
 
-O pandas realiza a leitura e a manipulação dos dados. O Rich organiza a apresentação dos indicadores no terminal. Os scripts atuais não exigem importação direta de NumPy nem instalação de openpyxl, pois trabalham com arquivos CSV.
+A importação exibe registros, colunas, tipos, nulos por coluna, duplicatas e
+uma amostra. A limpeza salva a tabela tratada; o resumo lê exclusivamente
+essa saída. Execute novamente as duas últimas etapas após modificar a entrada.
+Os caminhos são relativos à pasta dos scripts, não ao diretório do terminal.
 
-## Execução
+## Organização
 
-Execute os comandos a partir da pasta do projeto.
-
-### 1. Conferir a leitura da base
-
-```powershell
-python .\importacao_dados.py
-```
-
-Essa etapa informa o número de registros carregados e mostra as cinco primeiras linhas.
-
-### 2. Executar a limpeza
-
-```powershell
-python .\Limpeza_dados.py
-```
-
-A rotina aplica as seguintes operações, nesta ordem:
-
-1. Remove colunas em que todos os valores são ausentes.
-2. Remove linhas que tenham pelo menos um valor ausente nas colunas restantes.
-3. Remove linhas inteiramente duplicadas e reorganiza o índice.
-4. Exibe a quantidade de registros iniciais, removidos e finais.
-5. Salva a tabela tratada em `Base_varejo_original.csv`, usando ponto e vírgula como separador.
-
-### 3. Apresentar o resumo
-
-```powershell
-python .\Resumo.py
-```
-
-O programa calcula os indicadores e apresenta um painel com Rich.
-
-**Fluxo atual:** a função `importar_dados()` lê a base de entrada indicada em `CAMINHO_CSV`. Portanto, executar a limpeza não faz o resumo passar automaticamente a usar `Base_varejo_original.csv`. Essa ligação entre as etapas ainda precisa ser ajustada no código para que o resumo represente a saída da limpeza.
-
-### Compatibilidade dos nomes de arquivos
-
-Os imports dos scripts usam `Importacao_dados` e `Formatacao`, enquanto os arquivos publicados se chamam `importacao_dados.py` e `formatacao.py`. O caminho da base no código também usa `Base_varejo.csv`, enquanto o repositório contém `Base_Varejo.csv`.
-
-Essas diferenças podem impedir a execução em sistemas que distinguem letras maiúsculas de minúsculas. Os nomes nos imports e nos caminhos precisam corresponder exatamente aos arquivos publicados.
-
-## Dados analisados
-
-Os arquivos CSV usam ponto e vírgula (`;`) como separador.
-
-| Coluna | Significado |
+| Arquivo | Finalidade |
 | --- | --- |
-| `DATA` | Data do registro de compra |
-| `CO_ID` | Identificador da compra |
-| `CL_ID` | Identificador do cliente |
-| `CL_GENERO` | Gênero informado do cliente |
-| `CL_EC` | Código do estado civil |
-| `CL_FHL` | Quantidade de filhos informada |
-| `CL_SEG` | Segmento do cliente |
-| `PR_ID` | Identificador do produto ou SKU |
-| `PR_CAT` | Categoria do produto |
-| `PR_NOME` | Nome do produto |
+| `Base_Varejo.csv` | Entrada preservada |
+| `Base_varejo_original.csv` | Saída limpa, sobrescrita pela limpeza; o nome foi mantido por compatibilidade |
+| `importacao_dados.py` | Leitura estruturada com csv.DictReader e leitura tabular com pandas |
+| `Limpeza_dados.py` | Padronização, validação, separação de registros inválidos e deduplicação |
+| `Resumo.py` | Indicadores, estatísticas, agrupamentos e conclusões |
+| `formatacao.py` | Exibição com Rich e formatação de números |
+| `requirements.txt` | Dependências pandas e Rich |
+| `resultados/` | Relatórios, estatísticas, agrupamentos e registros rejeitados gerados na execução |
 
-O resumo interpreta os códigos de estado civil como: 1 para casado(a), 2 para divorciado(a), 3 para separado(a), 4 para solteiro(a) e 5 para viúvo(a). Esse mapeamento está definido no código e deve ser confirmado com o dicionário da base.
+## Colunas
 
-## Indicadores calculados
+| Coluna | Conteúdo |
+| --- | --- |
+| DATA | Data da compra |
+| CO_ID | Identificador da compra |
+| CL_ID | Identificador do cliente |
+| CL_GENERO | Gênero informado |
+| CL_EC | Código do estado civil |
+| CL_FHL | Número de filhos |
+| CL_SEG | Segmento |
+| PR_ID | Identificador do produto ou SKU |
+| PR_CAT | Categoria |
+| PR_NOME | Nome do produto |
 
-O módulo `Resumo.py` calcula:
+O estado civil é apresentado pelo código, sem atribuir rótulos sem um
+dicionário de dados confirmado. Uma linha representa uma ocorrência de produto;
+uma compra pode conter várias linhas.
 
-- Datas com maior número de registros, incluindo empates.
-- Total de registros, compras distintas e clientes distintos.
-- Clientes únicos por gênero, estado civil e segmento.
-- Média de filhos, considerando o registro mais recente de cada cliente.
-- Categorias mais frequentes, incluindo empates.
-- Produtos mais frequentes, agrupados pela combinação de SKU e nome.
+## Regras de limpeza e qualidade
 
-Para selecionar o registro mais recente de cada cliente, o resumo converte temporariamente `DATA` com `pd.to_datetime(..., dayfirst=True)`, ordena os registros e mantém o último por `CL_ID`. A função de importação não converte a coluna de data.
+- Remover colunas totalmente vazias e normalizar espaços em textos com expressão regular.
+- Preencher categorias vazias com `Sem Categoria` usando if/else.
+  Nome, gênero e segmento ausentes recebem `Não informado`.
+- Converter códigos e filhos para inteiros anuláveis. IDs devem ser positivos
+  e inteiros; filhos e estado civil não podem ser negativos ou fracionários.
+  O domínio dos códigos de estado civil ainda depende de dicionário confirmado.
+- Converter datas no padrão dia/mês/ano usando datetime; datas impossíveis
+  são consideradas inválidas.
+- Separar linhas sem IDs essenciais ou datas válidas em
+  `resultados/registros_rejeitados.csv`.
+- Adotar a hipótese operacional de que um CO_ID corresponde a um cliente e
+  uma data; compras conflitantes também são separadas. A atividade não define
+  uma regra mais específica para o identificador.
+- Eliminar linhas idênticas após padronização, mantendo um registro.
+- Preservar filhos ausentes como nulos: zero significaria afirmar que o
+  cliente não tem filhos. As estatísticas ignoram esses valores e mostram a
+  contagem válida.
+- Registrar quantos dados entraram, foram separados, deduplicados e mantidos.
+  Uma verificação de reconciliação confere esses totais.
 
-**Interpretação das contagens:** uma compra pode aparecer em várias linhas por conter diferentes produtos. Assim, contar linhas por data ou produto não equivale a contar compras distintas. Embora o painel use as expressões “mais compras” e “unidades” em alguns rótulos, esses indicadores são contagens de registros.
+Não há preço, quantidade nem dimensões físicas nesta base. Portanto, não há
+imputação de dimensões nem conversão de valores monetários para float.
+As médias e demais medidas estatísticas são números decimais.
 
-A base não contém preços nem uma coluna explícita de quantidade. Portanto, o projeto não calcula faturamento ou volume físico vendido.
+## Estatísticas e agrupamentos
 
-## Resultados registrados na análise
+São calculadas todas as medidas solicitadas para CL_FHL:
 
-Os valores abaixo foram registrados anteriormente para a base tratada. Para reproduzi-los pelo comando de resumo, é necessário garantir que ele leia a mesma versão da base limpa.
+**Contagem, média, mediana, desvio padrão amostral, todas as modas, mínimo,
+máximo, primeiro quartil, segundo quartil e terceiro quartil.**
 
-1. **O segmento B reúne a maior parcela dos clientes:** 645 de 1.000 clientes (64,5%). Os segmentos C e A representam 271 (27,1%) e 84 (8,4%), respectivamente.
-2. **Alimentos é a categoria mais frequente:** 384.197 dos 733.447 registros de itens, aproximadamente 52,4%.
-3. **Papinha Infantil é o produto com mais registros:** o SKU 51 aparece 3.322 vezes. Esse total representa ocorrências no arquivo.
-4. **A distribuição de clientes por gênero é próxima:** 519 clientes possuem código F (51,9%) e 481 possuem código M (48,1%).
-5. **A média de filhos é de aproximadamente 1,14 por cliente**, considerando o registro mais recente de cada cliente. No painel atual, a função de formatação usa zero casas decimais por padrão, o que arredonda a média exibida.
+Os resultados são apresentados por registro e por cliente único.
+Para clientes, usa-se o perfil na data mais recente. Quando há perfis
+conflitantes nessa mesma data, o cliente é excluído somente dos indicadores
+demográficos, e a quantidade de exclusões é informada.
 
-## Reflexão sobre ETL e qualidade dos dados
+O relatório inclui agrupamentos por gênero, segmento, código de estado civil,
+categoria e mês. Categoria e mês apresentam contagens de registros e de compras
+distintas. As compras por categoria não são aditivas, pois uma compra pode
+conter várias categorias. Empates nas categorias e produtos líderes são preservados.
 
-ETL significa **Extração, Transformação e Carga**. Neste projeto, a extração corresponde à leitura do CSV com pandas; a transformação remove colunas vazias, registros incompletos e duplicatas; e a carga grava a tabela tratada em outro arquivo CSV.
+## Resultados verificados
 
-Separar essas etapas facilita a compreensão do processo e permite acompanhar quantos registros foram removidos. Entretanto, uma base com menos nulos e duplicatas não está necessariamente correta em todos os aspectos.
+Na execução com a cópia local da base de 830.000 registros:
 
-A remoção de nulos com `dropna()` foi a estratégia adotada no código. Ela simplifica a análise, mas pode descartar registros úteis e introduzir viés quando a ausência de informação está relacionada ao perfil dos clientes ou das compras. Uma evolução do projeto seria avaliar cada coluna antes de decidir entre excluir, preencher ou preservar valores ausentes.
+1. Foram removidas 96.553 duplicatas, restando **733.447 registros**; não houve
+   rejeições por IDs, datas ou conflitos de compra nessa execução.
+2. A base limpa contém **18.471 compras e 1.000 clientes**.
+3. O perfil mais recente dos clientes apresenta **519 códigos F e 481 códigos M**,
+   sem perfis ambíguos na última data.
+4. **ALIMENTOS** lidera com **384.197 registros**; o produto mais frequente é
+   **PAPINHA INFANTIL, SKU 51**, com **3.322 registros**.
+5. Por cliente, a média de filhos é **1,136**, a mediana e a moda são **0**,
+   e o desvio padrão amostral é **1,413330**.
+6. A deduplicação pode remover repetições legítimas de produtos; sem quantidade
+   nem identificador do item, essa hipótese precisa ser validada com a origem.
 
-A remoção de linhas idênticas também exige uma hipótese: elas são tratadas como duplicações indevidas. Sem um identificador do item ou uma coluna de quantidade, duas linhas iguais podem representar ocorrências legítimas. Por isso, essa decisão precisa ser validada com a origem dos dados.
+| Medida de filhos | Por cliente | Por registro |
+| --- | ---: | ---: |
+| Contagem válida | 1.000 | 733.447 |
+| Média | 1,136000 | 1,146049 |
+| Mediana | 0 | 0 |
+| Desvio padrão amostral | 1,413330 | 1,416917 |
+| Moda | 0 | 0 |
+| Mínimo | 0 | 0 |
+| Quartil 25% | 0 | 0 |
+| Quartil 50% | 0 | 0 |
+| Quartil 75% | 2 | 2 |
+| Máximo | 4 | 4 |
 
-O arquivo de entrada deve ser preservado. Já `Base_varejo_original.csv`, apesar do nome, é uma saída de processamento e não deve ser tratado como uma cópia original imutável.
+Esses valores dependem da versão da entrada. O programa gera conclusões
+atualizadas a cada execução.
 
-## Limitações e próximos ajustes
+## Saídas
 
-- Conectar o resumo à base limpa e padronizar maiúsculas e minúsculas nos nomes dos arquivos, imports e caminhos.
-- Incluir Rich no `requirements.txt` e ajustar a exibição da média para duas casas decimais.
-- Acrescentar validações de identificadores de compra e sua relação com clientes e datas. Essas verificações ainda não são realizadas pela classe de limpeza.
-- Completar as estatísticas de filhos com mediana, moda, desvio padrão, mínimo, máximo, contagem e quartis.
-- Avaliar categorias vazias, datas inválidas e valores ausentes por coluna antes da exclusão.
-- Conferir novamente os indicadores depois de integrar as etapas, registrando qual versão da base foi utilizada.
+Além da base limpa, são gerados:
+
+- `resultados/limpeza.txt`: diagnóstico final e contadores de limpeza.
+- `resultados/estatisticas_filhos.csv`: estatísticas por cliente e registro.
+- `resultados/agrupamento_*.csv`: agrupamentos.
+- `resultados/relatorio.txt`: indicadores, estatísticas e conclusões.
+- `resultados/conclusoes.md`: seis tópicos gerados com os dados.
+- `resultados/registros_rejeitados.csv`: linhas separadas e motivo.
+
+## Reflexão sobre ETL
+
+ETL significa Extração, Transformação e Carga. Aqui, a extração verifica a
+estrutura do CSV com DictReader e o carrega com pandas; a transformação
+padroniza textos, converte tipos e valida registros; a carga grava a base
+limpa e os relatórios para análise.
+
+Tratar ausências exige compreender o significado de cada campo. Substituir
+filhos ausentes por zero alteraria a interpretação; identificadores ausentes
+impedem relacionar uma linha com segurança. Por isso, o tratamento é específico
+por coluna, e registros inválidos são separados para revisão.
+
+A remoção de duplicatas é uma hipótese documentada, não uma prova de que as
+linhas repetidas eram erros. Preservar a entrada, explicar as regras e
+reconciliar as contagens permite revisar essa decisão. Os indicadores medem
+ocorrências e compras distintas; não permitem inferir faturamento ou unidades
+físicas sem os campos correspondentes.
+
+## Validação
+
+A limpeza e o resumo foram executados sobre a cópia local completa da base.
+Também foram conferidos exemplos com datas impossíveis, IDs negativos e
+fracionários, compra com clientes conflitantes, categoria vazia, filhos
+ausentes e duplicatas. As medidas estatísticas foram comparadas com uma
+sequência de valores conhecidos, incluindo quartis e desvio padrão amostral.
